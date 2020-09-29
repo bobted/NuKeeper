@@ -36,7 +36,7 @@ namespace NuKeeper.Commands
             _settingsReaders = settingsReaders;
         }
 
-        protected override async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
+        protected override async Task<ValidationResult> PopulateSettings(ISettingsContainer settings)
         {
             if (string.IsNullOrWhiteSpace(RepositoryUri))
             {

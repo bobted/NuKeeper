@@ -47,7 +47,7 @@ namespace NuKeeper.Local
             _nugetLogger = nugetLogger;
         }
 
-        public async Task Run(SettingsContainer settings, bool write)
+        public async Task Run(ISettingsContainer settings, bool write)
         {
             if (settings == null)
             {

@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using NuKeeper.Abstractions.CollaborationModels;
 using NuKeeper.Abstractions.CollaborationPlatform;
 using NuKeeper.Abstractions.Configuration;
@@ -6,10 +10,6 @@ using NuKeeper.Abstractions.Logging;
 using NuKeeper.Abstractions.NuGet;
 using NuKeeper.Abstractions.RepositoryInspection;
 using NuKeeper.Update;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NuKeeper.Engine.Packages
 {
@@ -37,7 +37,7 @@ namespace NuKeeper.Engine.Packages
             RepositoryData repository,
             IReadOnlyCollection<PackageUpdateSet> updates,
             NuGetSources sources,
-            SettingsContainer settings)
+            ISettingsContainer settings)
         {
             if (settings == null)
             {
@@ -81,7 +81,7 @@ namespace NuKeeper.Engine.Packages
 
         private async Task<int> MakeUpdatePullRequests(
             IGitDriver git, RepositoryData repository,
-            NuGetSources sources, SettingsContainer settings,
+            NuGetSources sources, ISettingsContainer settings,
             IReadOnlyCollection<PackageUpdateSet> updates)
         {
             _logger.Normal(UpdatesLogger.OldVersionsToBeUpdated(updates));
@@ -111,7 +111,7 @@ namespace NuKeeper.Engine.Packages
             {
                 var commitMessage = _collaborationFactory.CommitWorder.MakeCommitMessage(updateSet);
 
-                await _updateRunner.Update(updateSet, sources);
+                await _updateRunner.Update(updateSet, sources, settings);
 
                 await git.Commit(commitMessage);
             }

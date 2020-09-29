@@ -1,19 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using NSubstitute;
 using NuKeeper.Abstractions.CollaborationPlatform;
 using NuKeeper.Abstractions.Configuration;
+using NuKeeper.Abstractions.Git;
 using NuKeeper.Abstractions.Logging;
 using NuKeeper.Abstractions.Output;
+using NuKeeper.AzureDevOps;
 using NuKeeper.Collaboration;
 using NuKeeper.Commands;
 using NuKeeper.GitHub;
 using NuKeeper.Inspection.Logging;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using NuKeeper.Abstractions.Git;
-using NuKeeper.AzureDevOps;
 
 namespace NuKeeper.Tests.Commands
 {
@@ -51,7 +51,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(status, Is.EqualTo(-1));
             await engine
                 .DidNotReceive()
-                .Run(Arg.Any<SettingsContainer>());
+                .Run(Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(status, Is.EqualTo(0));
             await engine
                 .Received(1)
-                .Run(Arg.Any<SettingsContainer>());
+                .Run(Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(status, Is.EqualTo(0));
             await engine
                 .Received(1)
-                .Run(Arg.Any<SettingsContainer>());
+                .Run(Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -265,7 +265,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(settings.BranchSettings.BranchNameTemplate, Is.EqualTo(testTemplate));
         }
 
-        public static async Task<(SettingsContainer settingsContainer, CollaborationPlatformSettings platformSettings)> CaptureSettings(FileSettings settingsIn)
+        public static async Task<(ISettingsContainer settingsContainer, CollaborationPlatformSettings platformSettings)> CaptureSettings(FileSettings settingsIn)
         {
             var logger = Substitute.For<IConfigureLogger>();
             var fileSettings = Substitute.For<IFileSettingsCache>();
@@ -273,9 +273,9 @@ namespace NuKeeper.Tests.Commands
 
             var collaborationFactory = GetCollaborationFactory((d, e) => new GitHubSettingsReader(d, e));
 
-            SettingsContainer settingsOut = null;
+            ISettingsContainer settingsOut = null;
             var engine = Substitute.For<ICollaborationEngine>();
-            await engine.Run(Arg.Do<SettingsContainer>(x => settingsOut = x));
+            await engine.Run(Arg.Do<ISettingsContainer>(x => settingsOut = x));
 
             var command = new GlobalCommand(engine, logger, fileSettings, collaborationFactory)
             {

@@ -5,6 +5,6 @@ namespace NuKeeper.Collaboration
 {
     public interface ICollaborationEngine
     {
-        Task<int> Run(SettingsContainer settings);
+        Task<int> Run(ISettingsContainer settings);
     }
 }

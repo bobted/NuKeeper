@@ -13,6 +13,6 @@ namespace NuKeeper.Local
             IReadOnlyCollection<PackageUpdateSet> updates,
             IFolder workingFolder,
             NuGetSources sources,
-            SettingsContainer settings);
+            ISettingsContainer settings);
     }
 }

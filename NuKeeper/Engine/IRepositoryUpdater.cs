@@ -6,6 +6,6 @@ namespace NuKeeper.Engine
 {
     public interface IRepositoryUpdater
     {
-        Task<int> Run(IGitDriver git, RepositoryData repository, SettingsContainer settings);
+        Task<int> Run(IGitDriver git, RepositoryData repository, ISettingsContainer settings);
     }
 }

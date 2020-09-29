@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using NSubstitute;
 using NuKeeper.Abstractions;
 using NuKeeper.Abstractions.CollaborationModels;
@@ -16,10 +20,6 @@ using NuKeeper.Inspection.Sources;
 using NuKeeper.Update;
 using NuKeeper.Update.Process;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NuKeeper.Tests.Engine
 {
@@ -170,7 +170,7 @@ namespace NuKeeper.Tests.Engine
                 Arg.Any<RepositoryData>(),
                 Arg.Any<IReadOnlyCollection<PackageUpdateSet>>(),
                 Arg.Any<NuGetSources>(),
-                Arg.Any<SettingsContainer>());
+                Arg.Any<ISettingsContainer>());
         }
 
         private static async Task AssertDidNotReceiveMakeUpdate(
@@ -182,7 +182,7 @@ namespace NuKeeper.Tests.Engine
                 Arg.Any<RepositoryData>(),
                 Arg.Any<IReadOnlyCollection<PackageUpdateSet>>(),
                 Arg.Any<NuGetSources>(),
-                Arg.Any<SettingsContainer>());
+                Arg.Any<ISettingsContainer>());
         }
 
         private static void UpdateSelectionAll(IPackageUpdateSelection updateSelection)
@@ -203,7 +203,7 @@ namespace NuKeeper.Tests.Engine
                 .Returns(new List<PackageUpdateSet>());
         }
 
-        private static SettingsContainer MakeSettings(bool consolidateUpdates = false)
+        private static ISettingsContainer MakeSettings(bool consolidateUpdates = false)
         {
             return new SettingsContainer
             {
@@ -242,7 +242,7 @@ namespace NuKeeper.Tests.Engine
                         Arg.Any<RepositoryData>(),
                         Arg.Any<IReadOnlyCollection<PackageUpdateSet>>(),
                         Arg.Any<NuGetSources>(),
-                        Arg.Any<SettingsContainer>())
+                        Arg.Any<ISettingsContainer>())
                     .Returns(1);
             }
 

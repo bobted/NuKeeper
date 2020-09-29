@@ -1,8 +1,8 @@
-using McMaster.Extensions.CommandLineUtils;
-using NuKeeper.Inspection.Logging;
 using System.IO;
-using NuKeeper.Abstractions.Configuration;
 using System.Threading.Tasks;
+using McMaster.Extensions.CommandLineUtils;
+using NuKeeper.Abstractions.Configuration;
+using NuKeeper.Inspection.Logging;
 
 namespace NuKeeper.Commands
 {
@@ -19,7 +19,7 @@ namespace NuKeeper.Commands
         {
         }
 
-        protected override async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
+        protected override async Task<ValidationResult> PopulateSettings(ISettingsContainer settings)
         {
             var baseResult = await base.PopulateSettings(settings);
             if (!baseResult.IsSuccess)

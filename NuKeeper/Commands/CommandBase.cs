@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using NuKeeper.Abstractions;
 using NuKeeper.Abstractions.Configuration;
@@ -7,12 +13,6 @@ using NuKeeper.Abstractions.NuGet;
 using NuKeeper.Abstractions.Output;
 using NuKeeper.Engine;
 using NuKeeper.Inspection.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace NuKeeper.Commands
 {
@@ -125,7 +125,7 @@ namespace NuKeeper.Commands
             _configureLogger.Initialise(logLevel, logDest, logFile);
         }
 
-        private SettingsContainer MakeSettings()
+        private ISettingsContainer MakeSettings()
         {
             var fileSettings = FileSettingsCache.GetSettings();
             var allowedChange = Concat.FirstValue(AllowedChange, fileSettings.Change, VersionChange.Major);
@@ -153,7 +153,7 @@ namespace NuKeeper.Commands
             return settings;
         }
 
-        protected virtual async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
+        protected virtual async Task<ValidationResult> PopulateSettings(ISettingsContainer settings)
         {
             var minPackageAge = ReadMinPackageAge();
             if (!minPackageAge.HasValue)
@@ -212,7 +212,7 @@ namespace NuKeeper.Commands
         }
 
         private ValidationResult PopulatePackageIncludes(
-            SettingsContainer settings)
+            ISettingsContainer settings)
         {
             var settingsFromFile = FileSettingsCache.GetSettings();
             var value = Concat.FirstValue(Include, settingsFromFile.Include);
@@ -239,7 +239,7 @@ namespace NuKeeper.Commands
         }
 
         private ValidationResult PopulatePackageExcludes(
-            SettingsContainer settings)
+            ISettingsContainer settings)
         {
             var settingsFromFile = FileSettingsCache.GetSettings();
             var value = Concat.FirstValue(Exclude, settingsFromFile.Exclude);
@@ -266,7 +266,7 @@ namespace NuKeeper.Commands
         }
 
         private ValidationResult PopulateBranchNameTemplate(
-            SettingsContainer settings)
+            ISettingsContainer settings)
         {
             var settingsFromFile = FileSettingsCache.GetSettings();
             var value = Concat.FirstValue(BranchNameTemplate, settingsFromFile.BranchNameTemplate);
@@ -317,6 +317,6 @@ namespace NuKeeper.Commands
             return ValidationResult.Success;
         }
 
-        protected abstract Task<int> Run(SettingsContainer settings);
+        protected abstract Task<int> Run(ISettingsContainer settings);
     }
 }

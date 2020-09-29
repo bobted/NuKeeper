@@ -2,7 +2,7 @@ using NuKeeper.Abstractions.Inspections.Files;
 
 namespace NuKeeper.Abstractions.Configuration
 {
-    public class SettingsContainer
+    public class SettingsContainer : ISettingsContainer
     {
         public SourceControlServerSettings SourceControlServerSettings { get; set; }
 

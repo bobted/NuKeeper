@@ -1,10 +1,10 @@
+using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using NuKeeper.Abstractions;
 using NuKeeper.Abstractions.CollaborationPlatform;
 using NuKeeper.Abstractions.Configuration;
 using NuKeeper.Collaboration;
 using NuKeeper.Inspection.Logging;
-using System.Threading.Tasks;
 
 namespace NuKeeper.Commands
 {
@@ -19,7 +19,7 @@ namespace NuKeeper.Commands
         {
         }
 
-        protected override async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
+        protected override async Task<ValidationResult> PopulateSettings(ISettingsContainer settings)
         {
             var fileSettings = FileSettingsCache.GetSettings();
             ApiEndpoint = Concat.FirstValue(ApiEndpoint, fileSettings.Api, "https://api.github.com");

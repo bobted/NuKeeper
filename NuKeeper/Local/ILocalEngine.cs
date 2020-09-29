@@ -5,6 +5,6 @@ namespace NuKeeper.Local
 {
     public interface ILocalEngine
     {
-        Task Run(SettingsContainer settings, bool write);
+        Task Run(ISettingsContainer settings, bool write);
     }
 }

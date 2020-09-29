@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using NSubstitute;
 using NuKeeper.Abstractions;
 using NuKeeper.Abstractions.Configuration;
@@ -10,8 +12,6 @@ using NuKeeper.Update;
 using NuKeeper.Update.Process;
 using NuKeeper.Update.Selection;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace NuKeeper.Tests.Local
 {
@@ -34,7 +34,7 @@ namespace NuKeeper.Tests.Local
                 NuGetSources.GlobalFeed, Settings());
 
             await runner.Received(0)
-                .Update(Arg.Any<PackageUpdateSet>(), Arg.Any<NuGetSources>());
+                .Update(Arg.Any<PackageUpdateSet>(), Arg.Any<NuGetSources>(), Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace NuKeeper.Tests.Local
             await updater.ApplyUpdates(updates, folder, NuGetSources.GlobalFeed, Settings());
 
             await runner.Received(1)
-                .Update(Arg.Any<PackageUpdateSet>(), Arg.Any<NuGetSources>());
+                .Update(Arg.Any<PackageUpdateSet>(), Arg.Any<NuGetSources>(), Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace NuKeeper.Tests.Local
             await updater.ApplyUpdates(updates, folder, NuGetSources.GlobalFeed, Settings());
 
             await runner.Received(2)
-                .Update(Arg.Any<PackageUpdateSet>(), Arg.Any<NuGetSources>());
+                .Update(Arg.Any<PackageUpdateSet>(), Arg.Any<NuGetSources>(), Arg.Any<ISettingsContainer>());
         }
 
 
@@ -96,7 +96,7 @@ namespace NuKeeper.Tests.Local
                 .Returns(x => x.ArgAt<IReadOnlyCollection<PackageUpdateSet>>(0));
         }
 
-        private static SettingsContainer Settings()
+        private static ISettingsContainer Settings()
         {
             return new SettingsContainer
             {

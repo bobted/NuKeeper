@@ -16,7 +16,7 @@ namespace NuKeeper.Commands
         {
         }
 
-        protected override async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
+        protected override async Task<ValidationResult> PopulateSettings(ISettingsContainer settings)
         {
             var baseResult = await base.PopulateSettings(settings);
             if (!baseResult.IsSuccess)

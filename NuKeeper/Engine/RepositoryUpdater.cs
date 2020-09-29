@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using NuKeeper.Abstractions.Configuration;
 using NuKeeper.Abstractions.Git;
 using NuKeeper.Abstractions.Logging;
@@ -9,8 +11,6 @@ using NuKeeper.Inspection;
 using NuKeeper.Inspection.Report;
 using NuKeeper.Inspection.Sources;
 using NuKeeper.Update.Process;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace NuKeeper.Engine
 {
@@ -45,7 +45,7 @@ namespace NuKeeper.Engine
         public async Task<int> Run(
             IGitDriver git,
             RepositoryData repository,
-            SettingsContainer settings)
+            ISettingsContainer settings)
         {
             if (repository == null)
             {
@@ -105,7 +105,7 @@ namespace NuKeeper.Engine
             IGitDriver git, RepositoryData repository,
             IReadOnlyCollection<PackageUpdateSet> targetUpdates,
             NuGetSources sources,
-            SettingsContainer settings)
+            ISettingsContainer settings)
         {
             if (targetUpdates.Count == 0)
             {

@@ -9,6 +9,6 @@ namespace NuKeeper.Engine
     {
         Task<int> Run(RepositorySettings repository,
             GitUsernamePasswordCredentials credentials,
-            SettingsContainer settings, User user);
+            ISettingsContainer settings, User user);
     }
 }

@@ -43,7 +43,7 @@ namespace NuKeeper.Tests.Local
                     Arg.Any<IReadOnlyCollection<PackageUpdateSet>>(),
                     Arg.Any<IFolder>(),
                     Arg.Any<NuGetSources>(),
-                    Arg.Any<SettingsContainer>());
+                    Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace NuKeeper.Tests.Local
                     Arg.Any<IReadOnlyCollection<PackageUpdateSet>>(),
                     Arg.Any<IFolder>(),
                     Arg.Any<NuGetSources>(),
-                    Arg.Any<SettingsContainer>());
+                    Arg.Any<ISettingsContainer>());
         }
 
         private static LocalEngine MakeLocalEngine(IUpdateFinder finder, ILocalUpdater updater)
@@ -93,7 +93,7 @@ namespace NuKeeper.Tests.Local
             var nugetLogger = Substitute.For<NuGet.Common.ILogger>();
 
             var reporter = Substitute.For<IReporter>();
-            
+
             var engine = new LocalEngine(reader, finder, sorter, updater,
                 reporter, logger, nugetLogger);
             Assert.That(engine, Is.Not.Null);

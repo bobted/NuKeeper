@@ -29,7 +29,7 @@ namespace NuKeeper.Collaboration
             _logger = logger;
         }
 
-        public async Task<int> Run(SettingsContainer settings)
+        public async Task<int> Run(ISettingsContainer settings)
         {
             if (settings == null)
             {

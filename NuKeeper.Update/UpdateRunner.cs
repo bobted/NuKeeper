@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft;
 using NuKeeper.Abstractions.Configuration;
 using NuKeeper.Abstractions.Logging;
 using NuKeeper.Abstractions.NuGet;
@@ -14,7 +15,6 @@ namespace NuKeeper.Update
     public class UpdateRunner : IUpdateRunner
     {
         private readonly INuKeeperLogger _logger;
-        private readonly ISettingsContainer _settingsContainer;
         private readonly IFileRestoreCommand _fileRestoreCommand;
         private readonly INuGetUpdatePackageCommand _nuGetUpdatePackageCommand;
         private readonly IDotNetUpdatePackageCommand _dotNetUpdatePackageCommand;
@@ -25,7 +25,6 @@ namespace NuKeeper.Update
 
         public UpdateRunner(
             INuKeeperLogger logger,
-            ISettingsContainer settingsContainer,
             IFileRestoreCommand fileRestoreCommand,
             INuGetUpdatePackageCommand nuGetUpdatePackageCommand,
             IDotNetUpdatePackageCommand dotNetUpdatePackageCommand,
@@ -35,7 +34,6 @@ namespace NuKeeper.Update
             IUpdateDirectoryBuildTargetsCommand updateDirectoryBuildTargetsCommand)
         {
             _logger = logger;
-            _settingsContainer = settingsContainer;
             _fileRestoreCommand = fileRestoreCommand;
             _nuGetUpdatePackageCommand = nuGetUpdatePackageCommand;
             _dotNetUpdatePackageCommand = dotNetUpdatePackageCommand;
@@ -45,12 +43,11 @@ namespace NuKeeper.Update
             _updateDirectoryBuildTargetsCommand = updateDirectoryBuildTargetsCommand;
         }
 
-        public async Task Update(PackageUpdateSet updateSet, NuGetSources sources)
+        public async Task Update(PackageUpdateSet updateSet, NuGetSources sources, ISettingsContainer settings)
         {
-            if (updateSet == null)
-            {
-                throw new ArgumentNullException(nameof(updateSet));
-            }
+            Requires.NotNull(updateSet, nameof(updateSet));
+            Requires.NotNull(sources, nameof(sources));
+            Requires.NotNull(settings, nameof(settings));
 
             var sortedUpdates = Sort(updateSet.CurrentPackages);
 
@@ -58,7 +55,7 @@ namespace NuKeeper.Update
 
             foreach (var current in sortedUpdates)
             {
-                var updateCommands = GetUpdateCommands(current.Path.PackageReferenceType, _settingsContainer.UserSettings.RestoreBeforePackageUpdate);
+                var updateCommands = GetUpdateCommands(current.Path.PackageReferenceType, settings.UserSettings.RestoreBeforePackageUpdate);
                 foreach (var updateCommand in updateCommands)
                 {
                     await updateCommand.Invoke(current,

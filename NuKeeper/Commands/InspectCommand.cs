@@ -17,7 +17,7 @@ namespace NuKeeper.Commands
             _engine = engine;
         }
 
-        protected override async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
+        protected override async Task<ValidationResult> PopulateSettings(ISettingsContainer settings)
         {
             var baseResult = await base.PopulateSettings(settings);
             if (!baseResult.IsSuccess)
@@ -28,7 +28,7 @@ namespace NuKeeper.Commands
             return ValidationResult.Success;
         }
 
-        protected override async Task<int> Run(SettingsContainer settings)
+        protected override async Task<int> Run(ISettingsContainer settings)
         {
             await _engine.Run(settings, false);
             return 0;

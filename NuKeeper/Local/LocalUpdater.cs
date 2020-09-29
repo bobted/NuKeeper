@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft;
 using NuKeeper.Abstractions.Configuration;
 using NuKeeper.Abstractions.Inspections.Files;
 using NuKeeper.Abstractions.Logging;
@@ -37,12 +37,9 @@ namespace NuKeeper.Local
             IReadOnlyCollection<PackageUpdateSet> updates,
             IFolder workingFolder,
             NuGetSources sources,
-            SettingsContainer settings)
+            ISettingsContainer settings)
         {
-            if (settings == null)
-            {
-                throw new ArgumentNullException(nameof(settings));
-            }
+            Requires.NotNull(settings, nameof(settings));
 
             if (!updates.Any())
             {
@@ -58,10 +55,10 @@ namespace NuKeeper.Local
                 return;
             }
 
-            await ApplyUpdates(filtered, workingFolder, sources);
+            await ApplyUpdatesInternal(filtered, workingFolder, sources, settings);
         }
 
-        private async Task ApplyUpdates(IReadOnlyCollection<PackageUpdateSet> updates, IFolder workingFolder, NuGetSources sources)
+        private async Task ApplyUpdatesInternal(IReadOnlyCollection<PackageUpdateSet> updates, IFolder workingFolder, NuGetSources sources, ISettingsContainer settings)
         {
             await _solutionRestore.CheckRestore(updates, workingFolder, sources);
 
@@ -69,7 +66,7 @@ namespace NuKeeper.Local
             {
                 _logger.Minimal("Updating " + Description.ForUpdateSet(update));
 
-                await _updateRunner.Update(update, sources);
+                await _updateRunner.Update(update, sources, settings);
             }
         }
     }

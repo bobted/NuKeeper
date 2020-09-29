@@ -27,7 +27,7 @@ namespace NuKeeper.Commands
         {
         }
 
-        protected override async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
+        protected override async Task<ValidationResult> PopulateSettings(ISettingsContainer settings)
         {
             var baseResult = await base.PopulateSettings(settings);
             if (!baseResult.IsSuccess)
@@ -56,7 +56,7 @@ namespace NuKeeper.Commands
             return ValidationResult.Success;
         }
 
-        private ValidationResult PopulateIncludeRepos(SettingsContainer settings)
+        private ValidationResult PopulateIncludeRepos(ISettingsContainer settings)
         {
             var settingsFromFile = FileSettingsCache.GetSettings();
             var value = Concat.FirstValue(IncludeRepos, settingsFromFile.IncludeRepos);
@@ -79,7 +79,7 @@ namespace NuKeeper.Commands
             return ValidationResult.Success;
         }
 
-        private ValidationResult PopulateExcludeRepos(SettingsContainer settings)
+        private ValidationResult PopulateExcludeRepos(ISettingsContainer settings)
         {
             var settingsFromFile = FileSettingsCache.GetSettings();
             var value = Concat.FirstValue(ExcludeRepos, settingsFromFile.ExcludeRepos);

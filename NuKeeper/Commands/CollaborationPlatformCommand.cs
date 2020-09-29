@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using NuKeeper.Abstractions;
 using NuKeeper.Abstractions.CollaborationPlatform;
 using NuKeeper.Abstractions.Configuration;
-using NuKeeper.Inspection.Logging;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using NuKeeper.Collaboration;
+using NuKeeper.Inspection.Logging;
 
 namespace NuKeeper.Commands
 {
@@ -64,7 +64,7 @@ namespace NuKeeper.Commands
             _platformsSupportingDeleteBranchAfterMerge.Add(Abstractions.CollaborationPlatform.Platform.Gitea);
         }
 
-        protected override async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
+        protected override async Task<ValidationResult> PopulateSettings(ISettingsContainer settings)
         {
             var baseResult = await base.PopulateSettings(settings);
             if (!baseResult.IsSuccess)
@@ -127,14 +127,14 @@ namespace NuKeeper.Commands
             return ValidationResult.Success;
         }
 
-        protected override async Task<int> Run(SettingsContainer settings)
+        protected override async Task<int> Run(ISettingsContainer settings)
         {
             await _engine.Run(settings);
             return 0;
         }
 
         private ValidationResult PopulateDeleteBranchAfterMerge(
-            SettingsContainer settings)
+            ISettingsContainer settings)
         {
             var fileSettings = FileSettingsCache.GetSettings();
 

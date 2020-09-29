@@ -14,6 +14,6 @@ namespace NuKeeper.Engine.Packages
             RepositoryData repository,
             IReadOnlyCollection<PackageUpdateSet> updates,
             NuGetSources sources,
-            SettingsContainer settings);
+            ISettingsContainer settings);
     }
 }

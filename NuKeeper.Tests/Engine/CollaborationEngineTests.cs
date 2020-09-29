@@ -1,14 +1,14 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using NSubstitute;
+using NuKeeper.Abstractions.CollaborationModels;
 using NuKeeper.Abstractions.CollaborationPlatform;
 using NuKeeper.Abstractions.Configuration;
 using NuKeeper.Abstractions.Logging;
+using NuKeeper.Collaboration;
 using NuKeeper.Engine;
 using NuKeeper.Inspection.Files;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using NuKeeper.Abstractions.CollaborationModels;
-using NuKeeper.Collaboration;
 
 namespace NuKeeper.Tests.Engine
 {
@@ -141,7 +141,7 @@ namespace NuKeeper.Tests.Engine
             return engine;
         }
 
-        private static SettingsContainer MakeSettings()
+        private static ISettingsContainer MakeSettings()
         {
             return new SettingsContainer
             {

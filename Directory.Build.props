@@ -17,6 +17,6 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.VisualStudio.Validation" Version="15.5.31" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.VisualStudio.Validation" Version="15.5.31"/> <!-- PrivateAssets="All" /> -->
     </ItemGroup>
 </Project>

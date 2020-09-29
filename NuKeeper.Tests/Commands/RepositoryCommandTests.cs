@@ -28,7 +28,7 @@ namespace NuKeeper.Tests.Commands
     {
         private IEnvironmentVariablesProvider _environmentVariablesProvider;
 
-        public static async Task<(SettingsContainer settingsContainer, CollaborationPlatformSettings platformSettings)> CaptureSettings(
+        public static async Task<(ISettingsContainer settingsContainer, CollaborationPlatformSettings platformSettings)> CaptureSettings(
             FileSettings settingsIn,
             bool addLabels = false,
             int? maxPackageUpdates = null)
@@ -42,9 +42,9 @@ namespace NuKeeper.Tests.Commands
             var settingsReaders = new List<ISettingsReader> { settingReader };
             var collaborationFactory = GetCollaborationFactory(environmentVariablesProvider, settingsReaders);
 
-            SettingsContainer settingsOut = null;
+            ISettingsContainer settingsOut = null;
             var engine = Substitute.For<ICollaborationEngine>();
-            await engine.Run(Arg.Do<SettingsContainer>(x => settingsOut = x));
+            await engine.Run(Arg.Do<ISettingsContainer>(x => settingsOut = x));
 
             var command = new RepositoryCommand(engine, logger, fileSettings, collaborationFactory, settingsReaders);
             command.PersonalAccessToken = "testToken";
@@ -152,7 +152,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(status, Is.EqualTo(-1));
             await engine
                 .DidNotReceive()
-                .Run(Arg.Any<SettingsContainer>());
+                .Run(Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -178,7 +178,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(status, Is.EqualTo(0));
             await engine
                 .Received(1)
-                .Run(Arg.Any<SettingsContainer>());
+                .Run(Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -370,7 +370,7 @@ namespace NuKeeper.Tests.Commands
 
             await updater.Received().Run(Arg.Any<IGitDriver>(),
                 Arg.Any<RepositoryData>(),
-                Arg.Is<SettingsContainer>(c => c.WorkingFolder.FullPath.EndsWith("testdirectory", StringComparison.Ordinal)));
+                Arg.Is<ISettingsContainer>(c => c.WorkingFolder.FullPath.EndsWith("testdirectory", StringComparison.Ordinal)));
         }
 
         [Test]
@@ -407,7 +407,7 @@ namespace NuKeeper.Tests.Commands
             }, null);
 
             await updater.Received().Run(Arg.Any<IGitDriver>(),
-                Arg.Is<RepositoryData>(r => r.DefaultBranch == "custombranch"), Arg.Any<SettingsContainer>());
+                Arg.Is<RepositoryData>(r => r.DefaultBranch == "custombranch"), Arg.Any<ISettingsContainer>());
         }
 
         [Test]
@@ -447,7 +447,7 @@ namespace NuKeeper.Tests.Commands
             }, null);
 
             await updater.Received().Run(Arg.Any<IGitDriver>(),
-                Arg.Is<RepositoryData>(r => r.DefaultBranch == "custombranch"), Arg.Any<SettingsContainer>());
+                Arg.Is<RepositoryData>(r => r.DefaultBranch == "custombranch"), Arg.Any<ISettingsContainer>());
         }
 
         [Test]

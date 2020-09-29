@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using NSubstitute;
 using NuKeeper.Abstractions.Configuration;
 using NuKeeper.Abstractions.Logging;
@@ -6,8 +8,6 @@ using NuKeeper.Commands;
 using NuKeeper.Inspection.Logging;
 using NuKeeper.Local;
 using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
 
 namespace NuKeeper.Tests.Commands
 {
@@ -30,7 +30,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(status, Is.EqualTo(0));
             await engine
                 .Received(1)
-                .Run(Arg.Any<SettingsContainer>(), false);
+                .Run(Arg.Any<ISettingsContainer>(), false);
         }
 
         [Test]
@@ -310,7 +310,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(settingsOut.UserSettings.OutputFormat, Is.EqualTo(OutputFormat.Csv));
         }
 
-        public static async Task<SettingsContainer> CaptureSettings(FileSettings settingsIn,
+        public static async Task<ISettingsContainer> CaptureSettings(FileSettings settingsIn,
             OutputDestination? outputDestination = null,
             OutputFormat? outputFormat = null,
             string outputFileName = null)
@@ -318,9 +318,9 @@ namespace NuKeeper.Tests.Commands
             var logger = Substitute.For<IConfigureLogger>();
             var fileSettings = Substitute.For<IFileSettingsCache>();
 
-            SettingsContainer settingsOut = null;
+            ISettingsContainer settingsOut = null;
             var engine = Substitute.For<ILocalEngine>();
-            await engine.Run(Arg.Do<SettingsContainer>(x => settingsOut = x), false);
+            await engine.Run(Arg.Do<ISettingsContainer>(x => settingsOut = x), false);
 
 
             fileSettings.GetSettings().Returns(settingsIn);

@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using NSubstitute;
 using NuGet.Configuration;
 using NuGet.Packaging.Core;
 using NuGet.Versioning;
 using NuKeeper.Abstractions.Configuration;
+using NuKeeper.Abstractions.Logging;
+using NuKeeper.Abstractions.NuGet;
 using NuKeeper.Abstractions.NuGetApi;
 using NuKeeper.Abstractions.RepositoryInspection;
-using NSubstitute;
-using NuKeeper.Abstractions.Logging;
 using NuKeeper.Update.Process;
 using NUnit.Framework;
-using NuKeeper.Abstractions.NuGet;
-using System.Threading.Tasks;
 
 namespace NuKeeper.Update.Tests
 {
@@ -47,7 +47,6 @@ namespace NuKeeper.Update.Tests
 
             _sut = new UpdateRunner(
                 _nuKeeperLogger,
-                _settingsContainer,
                 _fileRestoreCommand,
                 _nuGetUpdatePackageCommand,
                 _dotNetUpdatePackageCommand,
@@ -68,7 +67,7 @@ namespace NuKeeper.Update.Tests
             var sources = NuGetSources.GlobalFeed;
 
             // Act
-            await _sut.Update(packageUpdateSet, sources);
+            await _sut.Update(packageUpdateSet, sources, _settingsContainer);
 
             // Assert
             await AssertCorrectProjectFileCommandsAreExecuted(packageUpdateSet, sources, restoreBeforePackageUpdate);
@@ -85,7 +84,7 @@ namespace NuKeeper.Update.Tests
             var sources = NuGetSources.GlobalFeed;
 
             // Act
-            await _sut.Update(packageUpdateSet, sources);
+            await _sut.Update(packageUpdateSet, sources, _settingsContainer);
 
             // Assert
             await AssertCorrectProjectFileOldStyleCommandsAreExecuted(packageUpdateSet, sources, restoreBeforePackageUpdate);
@@ -100,7 +99,7 @@ namespace NuKeeper.Update.Tests
             var sources = NuGetSources.GlobalFeed;
 
             // Act
-            await _sut.Update(packageUpdateSet, sources);
+            await _sut.Update(packageUpdateSet, sources, _settingsContainer);
 
             // Assert
             await AssertCorrectPackagesConfigCommandsAreExecuted(packageUpdateSet, sources);
@@ -115,7 +114,7 @@ namespace NuKeeper.Update.Tests
             var sources = NuGetSources.GlobalFeed;
 
             // Act
-            await _sut.Update(packageUpdateSet, sources);
+            await _sut.Update(packageUpdateSet, sources, _settingsContainer);
 
             // Assert
             await AssertCorrectNuspecCommandsAreExecuted(packageUpdateSet, sources);
@@ -130,7 +129,7 @@ namespace NuKeeper.Update.Tests
             var sources = NuGetSources.GlobalFeed;
 
             // Act
-            await _sut.Update(packageUpdateSet, sources);
+            await _sut.Update(packageUpdateSet, sources, _settingsContainer);
 
             // Assert
             await AssertCorrectDirectoryBuildTargetsCommandsAreExecuted(packageUpdateSet, sources);

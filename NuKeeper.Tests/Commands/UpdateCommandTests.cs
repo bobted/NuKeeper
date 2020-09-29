@@ -29,7 +29,7 @@ namespace NuKeeper.Tests.Commands
             Assert.That(status, Is.EqualTo(0));
             await engine
                 .Received(1)
-                .Run(Arg.Any<SettingsContainer>(), true);
+                .Run(Arg.Any<ISettingsContainer>(), true);
         }
 
         [Test]
@@ -166,16 +166,16 @@ namespace NuKeeper.Tests.Commands
             Assert.That(settings.BranchSettings.BranchNameTemplate, Is.EqualTo(testTemplate));
         }
 
-        public static async Task<SettingsContainer> CaptureSettings(FileSettings settingsIn,
+        public static async Task<ISettingsContainer> CaptureSettings(FileSettings settingsIn,
             VersionChange? change = null,
             int? maxPackageUpdates = null)
         {
             var logger = Substitute.For<IConfigureLogger>();
             var fileSettings = Substitute.For<IFileSettingsCache>();
 
-            SettingsContainer settingsOut = null;
+            ISettingsContainer settingsOut = null;
             var engine = Substitute.For<ILocalEngine>();
-            await engine.Run(Arg.Do<SettingsContainer>(x => settingsOut = x), true);
+            await engine.Run(Arg.Do<ISettingsContainer>(x => settingsOut = x), true);
 
 
             fileSettings.GetSettings().Returns(settingsIn);
