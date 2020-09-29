@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft;
 using NuGet.Configuration;
 using NuGet.Versioning;
 using NuKeeper.Abstractions.NuGet;
@@ -18,6 +19,9 @@ namespace NuKeeper.Update.Process
 
         public Task Invoke(PackageInProject currentPackage, NuGetSources allSources)
         {
+            Requires.NotNull(currentPackage, nameof(currentPackage));
+            Requires.NotNull(allSources, nameof(allSources));
+
             var projectPath = currentPackage.Path.Info.DirectoryName;
             var projectFileName = currentPackage.Path.Info.Name;
             var sources = allSources.CommandLine("-s");

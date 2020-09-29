@@ -43,7 +43,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuKeeper.Gitea", "NuKeeper.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuKeeper.Gitea.Tests", "NuKeeper.Gitea.Tests\NuKeeper.Gitea.Tests.csproj", "{C39BD2F9-CF1E-4E0C-BA00-ADD65759161E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuKeeper.Git.Tests", "NuKeeper.Git.Tests\NuKeeper.Git.Tests.csproj", "{8718DFD0-71E0-4841-A91F-62CC8E726126}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NuKeeper.Git.Tests", "NuKeeper.Git.Tests\NuKeeper.Git.Tests.csproj", "{8718DFD0-71E0-4841-A91F-62CC8E726126}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".root", ".root", "{8DFFE686-550D-4115-82CD-0040B5178E5D}"
+	ProjectSection(SolutionItems) = preProject
+		.azure-build.yml = .azure-build.yml
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.travis.yml = .travis.yml
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CodeAnalysisRules.ruleset = CodeAnalysisRules.ruleset
+		CodeAnalysisRulesForTests.ruleset = CodeAnalysisRulesForTests.ruleset
+		Directory.Build.props = Directory.Build.props
+		InstallNuKeeperDotnetTool.bat = InstallNuKeeperDotnetTool.bat
+		InstallNuKeeperDotnetTool.sh = InstallNuKeeperDotnetTool.sh
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "site", "site", "{A5ABA386-A78B-4D27-8CAA-197E71D3AC12}"
+	ProjectSection(SolutionItems) = preProject
+		site\config.toml = site\config.toml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

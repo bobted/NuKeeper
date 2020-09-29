@@ -1,5 +1,5 @@
-using System;
 using System.Threading.Tasks;
+using Microsoft;
 using NuGet.Configuration;
 using NuGet.Versioning;
 using NuKeeper.Abstractions.NuGet;
@@ -20,20 +20,9 @@ namespace NuKeeper.Update.Process
         public async Task Invoke(PackageInProject currentPackage,
             NuGetVersion newVersion, PackageSource packageSource, NuGetSources allSources)
         {
-            if (currentPackage == null)
-            {
-                throw new ArgumentNullException(nameof(currentPackage));
-            }
-
-            if (packageSource == null)
-            {
-                throw new ArgumentNullException(nameof(packageSource));
-            }
-
-            if (allSources == null)
-            {
-                throw new ArgumentNullException(nameof(allSources));
-            }
+            Requires.NotNull(currentPackage, nameof(currentPackage));
+            Requires.NotNull(packageSource, nameof(packageSource));
+            Requires.NotNull(allSources, nameof(allSources));
 
             var projectPath = currentPackage.Path.Info.DirectoryName;
             var projectFileName = currentPackage.Path.Info.Name;
