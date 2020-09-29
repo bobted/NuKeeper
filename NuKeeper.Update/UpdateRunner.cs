@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NuKeeper.Abstractions.Configuration;
 using NuKeeper.Abstractions.Logging;
 using NuKeeper.Abstractions.NuGet;
 using NuKeeper.Abstractions.RepositoryInspection;
@@ -13,26 +14,32 @@ namespace NuKeeper.Update
     public class UpdateRunner : IUpdateRunner
     {
         private readonly INuKeeperLogger _logger;
+        private readonly ISettingsContainer _settingsContainer;
         private readonly IFileRestoreCommand _fileRestoreCommand;
         private readonly INuGetUpdatePackageCommand _nuGetUpdatePackageCommand;
         private readonly IDotNetUpdatePackageCommand _dotNetUpdatePackageCommand;
+        private readonly IDotNetRestoreCommand _dotNetRestoreCommand;
         private readonly IUpdateProjectImportsCommand _updateProjectImportsCommand;
         private readonly IUpdateNuspecCommand _updateNuspecCommand;
         private readonly IUpdateDirectoryBuildTargetsCommand _updateDirectoryBuildTargetsCommand;
 
         public UpdateRunner(
             INuKeeperLogger logger,
+            ISettingsContainer settingsContainer,
             IFileRestoreCommand fileRestoreCommand,
             INuGetUpdatePackageCommand nuGetUpdatePackageCommand,
             IDotNetUpdatePackageCommand dotNetUpdatePackageCommand,
+            IDotNetRestoreCommand dotNetRestoreCommand,
             IUpdateProjectImportsCommand updateProjectImportsCommand,
             IUpdateNuspecCommand updateNuspecCommand,
             IUpdateDirectoryBuildTargetsCommand updateDirectoryBuildTargetsCommand)
         {
             _logger = logger;
+            _settingsContainer = settingsContainer;
             _fileRestoreCommand = fileRestoreCommand;
             _nuGetUpdatePackageCommand = nuGetUpdatePackageCommand;
             _dotNetUpdatePackageCommand = dotNetUpdatePackageCommand;
+            _dotNetRestoreCommand = dotNetRestoreCommand;
             _updateProjectImportsCommand = updateProjectImportsCommand;
             _updateNuspecCommand = updateNuspecCommand;
             _updateDirectoryBuildTargetsCommand = updateDirectoryBuildTargetsCommand;
@@ -51,13 +58,19 @@ namespace NuKeeper.Update
 
             foreach (var current in sortedUpdates)
             {
-                var updateCommands = GetUpdateCommands(current.Path.PackageReferenceType);
+                var updateCommands = GetUpdateCommands(current.Path.PackageReferenceType, _settingsContainer.UserSettings.RestoreBeforePackageUpdate);
                 foreach (var updateCommand in updateCommands)
                 {
                     await updateCommand.Invoke(current,
                         updateSet.SelectedVersion, updateSet.Selected.Source,
                         sources);
                 }
+            }
+
+            var projectsWithUpdateRequiringRestore = PackageProjectsRequiringDotNetRestore(sortedUpdates);
+            foreach (var projectRequiringRestore in projectsWithUpdateRequiringRestore)
+            {
+                await _dotNetRestoreCommand.Invoke(projectRequiringRestore, sources);
             }
         }
 
@@ -69,37 +82,56 @@ namespace NuKeeper.Update
         }
 
         private IReadOnlyCollection<IPackageCommand> GetUpdateCommands(
-            PackageReferenceType packageReferenceType)
+            PackageReferenceType packageReferenceType, bool restoreBeforePackageUpdate)
         {
+            var commands = new List<IPackageCommand>();
+
             switch (packageReferenceType)
             {
-                case PackageReferenceType.PackagesConfig:
-                    return new IPackageCommand[]
-                    {
-                        _fileRestoreCommand,
-                        _nuGetUpdatePackageCommand
-                    };
-
                 case PackageReferenceType.ProjectFileOldStyle:
-                    return new IPackageCommand[]
-                    {
-                        _updateProjectImportsCommand,
-                        _fileRestoreCommand,
-                        _dotNetUpdatePackageCommand
-                    };
-
+                    commands.Add(_updateProjectImportsCommand);
+                    commands.Add(_fileRestoreCommand);
+                    commands.AddRange(GetDotNetUpdatePackageCommand(restoreBeforePackageUpdate));
+                    break;
                 case PackageReferenceType.ProjectFile:
-                    return new[] { _dotNetUpdatePackageCommand };
-
+                    commands.AddRange(GetDotNetUpdatePackageCommand(restoreBeforePackageUpdate));
+                    break;
+                case PackageReferenceType.PackagesConfig:
+                    commands.Add(_fileRestoreCommand);
+                    commands.Add(_nuGetUpdatePackageCommand);
+                    break;
                 case PackageReferenceType.Nuspec:
-                    return new[] { _updateNuspecCommand };
-
+                    commands.Add(_updateNuspecCommand);
+                    break;
                 case PackageReferenceType.DirectoryBuildTargets:
-                    return new[] { _updateDirectoryBuildTargetsCommand };
-
+                    commands.Add(_updateDirectoryBuildTargetsCommand);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(packageReferenceType));
             }
+
+            return commands.ToArray();
+        }
+
+        private IReadOnlyCollection<IPackageCommand> GetDotNetUpdatePackageCommand(bool restoreBeforePackageUpdate)
+        {
+            var commands = new List<IPackageCommand>();
+
+            if (restoreBeforePackageUpdate)
+            {
+                commands.Add(_dotNetRestoreCommand);
+            }
+
+            commands.Add(_dotNetUpdatePackageCommand);
+            return commands.ToArray();
+        }
+
+        private static IReadOnlyCollection<PackageInProject> PackageProjectsRequiringDotNetRestore(IReadOnlyCollection<PackageInProject> packagesInProjects)
+        {
+            return packagesInProjects.Where(
+                x => x.Path.PackageReferenceType == PackageReferenceType.ProjectFileOldStyle
+                || x.Path.PackageReferenceType == PackageReferenceType.ProjectFile)
+                .ToArray();
         }
     }
 }

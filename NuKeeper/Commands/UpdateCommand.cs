@@ -14,6 +14,10 @@ namespace NuKeeper.Commands
             Description = "Maximum number of package updates to make. Defaults to 1.")]
         public int? MaxPackageUpdates { get; set; }
 
+        [Option(CommandOptionType.SingleValue, ShortName = "r", LongName = "restorebeforepackageupdate",
+            Description = "Performs 'dotnet restore' before each package update. Defaults to false.")]
+        public bool? RestoreBeforePackageUpdate { get; set; }
+
         private readonly ILocalEngine _engine;
 
         public UpdateCommand(ILocalEngine engine, IConfigureLogger logger, IFileSettingsCache fileSettingsCache)
@@ -44,6 +48,7 @@ namespace NuKeeper.Commands
             }
 
             settings.PackageFilters.MaxPackageUpdates = maxUpdates;
+            settings.UserSettings.RestoreBeforePackageUpdate = RestoreBeforePackageUpdate ?? false;
             return ValidationResult.Success;
         }
 

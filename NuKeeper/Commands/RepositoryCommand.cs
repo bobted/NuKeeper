@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using McMaster.Extensions.CommandLineUtils;
-
 using NuKeeper.Abstractions.CollaborationPlatform;
 using NuKeeper.Abstractions.Configuration;
 using NuKeeper.Abstractions.Formats;
@@ -16,14 +14,6 @@ namespace NuKeeper.Commands
     [Command("repo", "r", "repository", Description = "Performs version checks and generates pull requests for a single repository.")]
     internal class RepositoryCommand : CollaborationPlatformCommand
     {
-        private readonly IEnumerable<ISettingsReader> _settingsReaders;
-
-        public RepositoryCommand(ICollaborationEngine engine, IConfigureLogger logger, IFileSettingsCache fileSettingsCache, ICollaborationFactory collaborationFactory, IEnumerable<ISettingsReader> settingsReaders)
-            : base(engine, logger, fileSettingsCache, collaborationFactory)
-        {
-            _settingsReaders = settingsReaders;
-        }
-
         [Argument(0, Name = "Repository URI", Description = "The URI of the repository to scan.")]
         public string RepositoryUri { get; set; }
 
@@ -33,6 +23,18 @@ namespace NuKeeper.Commands
 
         [Option(CommandOptionType.SingleValue, ShortName = "cdir", Description = "If you want NuKeeper to check out the repository to an alternate path, set it here (by default, a temporary directory is used).")]
         protected string CheckoutDirectory { get; set; }
+
+        [Option(CommandOptionType.SingleValue, ShortName = "r", LongName = "restorebeforepackageupdate",
+            Description = "Performs 'dotnet restore' before each package update. Defaults to false.")]
+        public bool? RestoreBeforePackageUpdate { get; set; }
+
+        private readonly IEnumerable<ISettingsReader> _settingsReaders;
+
+        public RepositoryCommand(ICollaborationEngine engine, IConfigureLogger logger, IFileSettingsCache fileSettingsCache, ICollaborationFactory collaborationFactory, IEnumerable<ISettingsReader> settingsReaders)
+            : base(engine, logger, fileSettingsCache, collaborationFactory)
+        {
+            _settingsReaders = settingsReaders;
+        }
 
         protected override async Task<ValidationResult> PopulateSettings(SettingsContainer settings)
         {
@@ -75,7 +77,7 @@ namespace NuKeeper.Commands
             settings.SourceControlServerSettings.Scope = ServerScope.Repository;
             settings.UserSettings.MaxRepositoriesChanged = 1;
             settings.UserSettings.Directory = CheckoutDirectory;
-
+            settings.UserSettings.RestoreBeforePackageUpdate = RestoreBeforePackageUpdate ?? false;
             return ValidationResult.Success;
         }
 

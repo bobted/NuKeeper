@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using McMaster.Extensions.CommandLineUtils;
 using NuGet.Configuration;
 using NuGet.Versioning;
 using NuKeeper.Abstractions.NuGet;
@@ -38,11 +37,7 @@ namespace NuKeeper.Update.Process
 
             var projectPath = currentPackage.Path.Info.DirectoryName;
             var projectFileName = currentPackage.Path.Info.Name;
-            var sourceUrl = UriEscapedForArgument(packageSource.SourceUri);
-            var sources = allSources.CommandLine("-s");
-
-            var restoreCommand = $"restore {projectFileName} {sources}";
-            await _externalProcess.Run(projectPath, "dotnet", restoreCommand, true);
+            var sourceUrl = packageSource.SourceUri.ToString();
 
             if (currentPackage.Path.PackageReferenceType == PackageReferenceType.ProjectFileOldStyle)
             {
@@ -50,18 +45,8 @@ namespace NuKeeper.Update.Process
                 await _externalProcess.Run(projectPath, "dotnet", removeCommand, true);
             }
 
-            var addCommand = $"add {projectFileName} package {currentPackage.Id} -v {newVersion} -s {sourceUrl}";
+            var addCommand = $"add {projectFileName} package {currentPackage.Id} -v {newVersion} -s {sourceUrl} --no-restore";
             await _externalProcess.Run(projectPath, "dotnet", addCommand, true);
-        }
-
-        private static string UriEscapedForArgument(Uri uri)
-        {
-            if (uri == null)
-            {
-                return string.Empty;
-            }
-
-            return ArgumentEscaper.EscapeAndConcatenate(new string[] { uri.ToString() });
         }
     }
 }
